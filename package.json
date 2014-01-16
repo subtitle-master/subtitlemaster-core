@@ -1,7 +1,7 @@
 {
   "name": "subtitle-master-core",
   "version": "0.0.1",
-  "description": "",
+  "description": "Subtitle Master Core Functionality",
   "scripts": {
     "test": "barrier"
   },
@@ -11,6 +11,7 @@
       "email": "wilkerlucio@gmail.com"
     }
   ],
+  "main": "index.js",
   "author": "Wilker Lucio",
   "license": "MIT",
   "dependencies": {
