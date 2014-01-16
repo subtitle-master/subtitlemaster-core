@@ -1,0 +1,36 @@
+{
+  "name": "subtitle-master-core",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "test": "barrier"
+  },
+  "maintainers": [
+    {
+      "name": "Wilker Lucio",
+      "email": "wilkerlucio@gmail.com"
+    }
+  ],
+  "author": "Wilker Lucio",
+  "license": "MIT",
+  "dependencies": {
+    "coffee-script": "~1.6.3",
+    "regexp-quote": "0.0.0",
+    "node-dir": "~0.1.5",
+    "lodash": "~2.3.0",
+    "request": "~2.27.0",
+    "when": "~2.6.0",
+    "long": "~1.1.2",
+    "xmlrpc": "~1.1.1"
+  },
+  "devDependencies": {
+    "barriertest": "~0.2.5",
+    "load-grunt-tasks": "~0.2.0",
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-barrier": "~0.1.1",
+    "grunt-curl": "~1.2.1",
+    "sinon": "~1.7.3",
+    "better-stack-traces": "~1.0.0"
+  }
+}
