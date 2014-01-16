@@ -1,6 +1,6 @@
 require("coffee-script");
 
 module.exports = {
-  SearchDownload: require("./src/lib/interactors/search_download.coffee"),
-  VideoScan: require("./src/lib/interactors/video_scan.coffee")
+  SearchDownload: require("./lib/interactors/search_download.coffee"),
+  VideoScan: require("./lib/interactors/video_scan.coffee")
 };

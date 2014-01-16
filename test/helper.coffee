@@ -12,7 +12,7 @@ afterEach (sinon) -> sinon.restore()
 lazy "get", -> (property) -> (obj) -> obj[property]
 lazy "invoke", -> (method, args...) -> (obj) -> obj[method](args...)
 
-global.libRequire = (libPath) -> require(path.join("..", "src", "lib", libPath))
+global.libRequire = (libPath) -> require(path.join("..", "lib", libPath))
 global.fixture = (fixture) -> path.join __dirname, "fixtures", fixture
 global.quickStub = (args..., result) -> (calledArgs...) ->
   expect(calledArgs).eql(args)

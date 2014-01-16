@@ -20,7 +20,7 @@ module.exports = (grunt) ->
         spawn: false
 
       barrier:
-        files: ["src/lib/**", "test/**"]
+        files: ["lib/**", "test/**"]
         tasks: ["barrier:unit"]
 
   grunt.registerTask "default", ["barrier", "watch:barrier"]
