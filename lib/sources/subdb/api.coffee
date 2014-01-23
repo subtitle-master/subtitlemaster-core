@@ -7,7 +7,7 @@ request = require("request")
 UA = "SubDB/1.0 (Subtitle Master/2.0.0b; http://subtitlemaster.com)"
 
 module.exports = class SubDBAPI
-  constructor: (@endpoint = "http://api.thesubdb.com/", @request) ->
+  constructor: (@endpoint = "http://api.thesubdb.com/") ->
 
   search: (hash) -> @get("search", hash: hash).then ([r, body]) -> body.split(",")
 

@@ -6,6 +6,9 @@ Subtitle = require("./subtitle.coffee")
 LANG     = require("../../languages.coffee")
 
 module.exports = class OpenSubtitles
+  name: -> "Open Subtitles"
+  website: -> "http://www.opensubtitles.org"
+
   constructor: (@api) ->
 
   find: (path, languages) ->
@@ -14,6 +17,8 @@ module.exports = class OpenSubtitles
         return null unless data
 
         new Subtitle(data[0], this)
+
+  upload: -> W null
 
   hash: osHash
 

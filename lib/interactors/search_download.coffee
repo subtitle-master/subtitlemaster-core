@@ -1,9 +1,9 @@
-_         = require("lodash")
-W         = require("when")
-fs        = require("fs")
-localInfo = require("../local_subtitle_info")
-engine    = require("../search_engine")
-util      = require("../util")
+_            = require("lodash")
+W            = require("when")
+fs           = require("fs")
+localInfo    = require("../local_subtitle_info")
+SearchEngine = require("../search_engine")
+util         = require("../util")
 
 memoryCache = (->
   memory = {}
@@ -14,6 +14,7 @@ memoryCache = (->
 
 module.exports = class SearchDownloadOperation
   constructor: (@path, @languages, @cache = memoryCache) ->
+    @engine = new SearchEngine()
 
   run: -> W.promise (@resolve, @reject, @notify) => @runLocalInfo()
 
@@ -62,11 +63,11 @@ module.exports = class SearchDownloadOperation
       @resolve("notfound")
 
   localInfo: (path) -> localInfo(path)
-  search: (path, missing) -> engine.find(path, missing)
+  search: (path, missing) -> @engine.find(path, missing)
   download: (subtitle, destination) ->
     source = subtitle.contentStream()
     target = fs.createWriteStream(destination)
 
     util.promisedPipe(source, target)
 
-  upload: (path, subtitlePath) -> engine.upload(path, subtitlePath, @cache)
+  upload: (path, subtitlePath) -> @engine.upload(path, subtitlePath, @cache)
