@@ -1,9 +1,12 @@
 W      = require("when")
 xmlrpc = require("xmlrpc")
 
+PromisesWorker = require("../../promises_worker.coffee")
+
 module.exports = class OpenSubtitlesAPI
   constructor: (@userAgent) ->
     @client = xmlrpc.createClient(host: "api.opensubtitles.org", path: "/xml-rpc")
+    @worker = new PromisesWorker(5)
 
   auth: ->
     @LogIn().then ({status, token}) =>
@@ -24,11 +27,12 @@ module.exports = class OpenSubtitlesAPI
   SearchSubtitles: (token, query) -> @call("SearchSubtitles", token, query)
 
   call: (method, args...) ->
-    W.promise (resolve, reject) =>
-      @client.methodCall method, args, (err, value) ->
-        return reject(err) if err
+    @worker.push
+      run: => W.promise (resolve, reject) =>
+        @client.methodCall method, args, (err, value) ->
+          return reject(err) if err
 
-        resolve(value)
+          resolve(value)
 
 # quick OpenSubtitles XMLRPC used calls reference
 #

@@ -1,7 +1,7 @@
 W   = require("when")
 API = libRequire("sources/open_subtitles/api.coffee")
 
-describe "OpenSubtitles API", timeout: 10000, skip: true, ->
+describe "OpenSubtitles API", timeout: 10000, ->
   UA = "Subtitle Master v2.0.0.test"
   lazy "api", -> new API(UA)
 

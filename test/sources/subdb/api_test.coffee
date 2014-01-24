@@ -8,7 +8,7 @@ readStream = (stream) ->
     stream.on "data", (chunk) -> buf += chunk
     stream.on "end", -> resolve(buf)
 
-describe "SubDBAPI", skip: true, ->
+describe "SubDBAPI", ->
   it "initializes with the given endpoint", ->
     api = new API(ep = "endpoint")
     expect(api.endpoint).eq ep
