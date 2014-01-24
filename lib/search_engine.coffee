@@ -17,10 +17,20 @@ module.exports = class SearchEngine
 
   upload: (path, subtitlePath, cache) ->
     @uploadCacheKey(path, subtitlePath).then (cacheKey) =>
-      cache.check(cacheKey).then (isCached) =>
-        return "cached" if isCached
+      W.all _.map @sources, (source) ->
+        sourceCacheKey = cacheKey + "-#{source.id()}"
 
-        uploads = _.map @sources, (source) -> source.upload(path, subtitlePath)
-        W.all(uploads).then -> cache.put(cacheKey); "uploaded"
+        cache.check(sourceCacheKey).then (isCached) =>
+          return "cached" if isCached
 
-  uploadCacheKey: (path, subtitlePath) -> return W [path, subtitlePath].join("")
+          source.upload(path, subtitlePath).then (result) ->
+            cache.put(sourceCacheKey).then -> result
+
+  uploadCacheKey: (path, subtitlePath) ->
+    W.all([@md5Edges(path), @md5(subtitlePath)]).then (res) -> res.join("-")
+
+  cacheDownload: (cache, path, subtitlePath, sourceId) ->
+    @uploadCacheKey(path, subtitlePath).then (key) -> cache.put("#{key}-#{sourceId}")
+
+  md5Edges: require("./hashes/md5_edges.coffee").fromPath
+  md5:      require("./hashes/md5.coffee").fromPath

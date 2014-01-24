@@ -1,6 +1,6 @@
 md5 = libRequire("hashes/md5.coffee")
 
-describe "MD5 Hash", only: true, ->
+describe "MD5 Hash", ->
   it "reject when path doesn't exists", ->
     expect(md5.fromPath("invalid")).hold.reject()
 

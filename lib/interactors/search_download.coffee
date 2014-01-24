@@ -44,10 +44,9 @@ module.exports = class SearchDownloadOperation
     if missing.length > 0
       @notify ["search", missing]
 
-      @search(@path, missing).then(
-        (@subtitle) => @runDownload()
-        @reject
-      )
+      @search(@path, missing)
+        .then((@subtitle) => @runDownload())
+        .otherwise(@reject)
     else
       @resolve(if @uploaded then "uploaded" else "unchanged")
 
@@ -55,12 +54,17 @@ module.exports = class SearchDownloadOperation
     if @subtitle
       @notify ["download", @subtitle]
 
-      @download(@subtitle, @info.pathForLanguage(@subtitle.language())).then(
-        => @resolve("downloaded")
-        @reject
-      )
+      subtitlePath = @info.pathForLanguage(@subtitle.language())
+
+      @download(@subtitle, subtitlePath)
+        .then(=> @cacheDownload(subtitlePath))
+        .then(=> @resolve("downloaded"))
+        .otherwise(@reject)
     else
       @resolve("notfound")
+
+  cacheDownload: (subtitlePath) ->
+    @engine.cacheDownload(@cache, @path, subtitlePath, @subtitle.source.id())
 
   localInfo: (path) -> localInfo(path)
   search: (path, missing) -> @engine.find(path, missing)

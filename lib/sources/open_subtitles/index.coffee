@@ -6,6 +6,7 @@ Subtitle = require("./subtitle.coffee")
 LANG     = require("../../languages.coffee")
 
 module.exports = class OpenSubtitles
+  id: -> "open_subtitles"
   name: -> "Open Subtitles"
   website: -> "http://www.opensubtitles.org"
 

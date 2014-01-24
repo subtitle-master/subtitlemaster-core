@@ -2,7 +2,7 @@ _   = require("lodash")
 W   = require("when")
 SDP = libRequire("interactors/search_download")
 
-describe "Search Download Operation", ->
+describe "Search Download Operation", only: true, ->
   sdp  = null
   info = null
 
@@ -102,7 +102,10 @@ describe "Search Download Operation", ->
         subtitle = null
 
         beforeEach (sinon) ->
-          subtitle = language: -> "pt"
+          subtitle =
+            language: -> "pt"
+            source: {id: -> "id"}
+
           sinon.stub(sdp, "search").withArgs("path", ["pt"]).returns(W subtitle)
 
         it "rejects when download fails", (sinon) ->
@@ -117,6 +120,7 @@ describe "Search Download Operation", ->
         describe "given the download was complete", ->
           it "runs the entire process and return status downloaded", (sinon) ->
             sinon.stub(sdp, "download").withArgs(subtitle, "dest").returns(W null)
+            sinon.stub(sdp, "cacheDownload").withArgs("dest").returns(W true)
 
             testSeach [
               [["info", info]]

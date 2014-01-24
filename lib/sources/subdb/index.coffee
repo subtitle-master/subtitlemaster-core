@@ -7,6 +7,7 @@ Subtitle = require("./subtitle.coffee")
 md5Edges = require("../../hashes/md5_edges.coffee")
 
 module.exports = class SubDB
+  id: -> "subdb"
   name: -> "SubDB"
   website: -> "http://thesubdb.com"
 
