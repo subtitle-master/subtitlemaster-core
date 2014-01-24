@@ -2,7 +2,7 @@ _   = require("lodash")
 W   = require("when")
 SDP = libRequire("interactors/search_download")
 
-describe "Search Download Operation", only: true, ->
+describe "Search Download Operation", ->
   sdp  = null
   info = null
 
