@@ -11,7 +11,10 @@ module.exports = class PromisesWorker
 
       @wrapPromise(job.run())
     else
-      @queue.push(job)
+      defer = W.defer()
+      @queue.push(job: job, defer: defer)
+
+      defer.promise
 
   wrapPromise: (promise) ->
     W.promise (resolve, reject, notify) =>
@@ -29,4 +32,8 @@ module.exports = class PromisesWorker
 
   workerDone: ->
     @workingCount -= 1
-    @push(@queue.shift()) if @queue.length
+
+    if @queue.length
+      {job, defer} = @queue.shift()
+
+      defer.resolve(@push(job))

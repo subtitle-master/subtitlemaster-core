@@ -2,7 +2,7 @@ W = require("when")
 
 PromisesWorker = libRequire("promises_worker.coffee")
 
-describe "PromisesWorker", ->
+describe "PromisesWorker", only: true, ->
   lazy "worker", -> new PromisesWorker(1)
 
   class SimpleJob
@@ -51,3 +51,15 @@ describe "PromisesWorker", ->
 
     defer.promise.then undefined, ->
       expect(job.started).true
+
+  it "runs all the jobs", (worker) ->
+    defer1 = W.defer()
+    defer2 = W.defer()
+
+    res1 = worker.push(new SimpleJob(-> defer1.promise))
+    res2 = worker.push(new SimpleJob(-> defer2.promise))
+
+    defer1.resolve("one")
+    defer2.resolve("two")
+
+    res2.then (res) -> expect(res).eq "two"
