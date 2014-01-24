@@ -1,3 +1,4 @@
+_        = require("lodash")
 W        = require("when")
 SubDB    = libRequire("sources/subdb")
 Subtitle = libRequire("sources/subdb/subtitle.coffee")
@@ -40,10 +41,23 @@ describe "SubDB", ->
           expect(subtitle.language()).eq "pt"
 
   describe "#upload", ->
-    it "post the information and return the status code", (api, source) ->
-      source.hash = fromPath: quickStub(path = "video.mp4", W hash = "hash")
-      source.streamFromPath = quickStub(subPath = "abc", stream = "stream")
+    testUploadResponse = (status, response) ->
+      barrierContext.inject (api, source) ->
+        source.hash = fromPath: quickStub(path = "video.mp4", W hash = "hash")
+        source.streamFromPath = quickStub(subPath = "abc", stream = "stream")
 
-      api.upload = quickStub(hash, stream, W statusCode: 201)
+        api.upload = quickStub(hash, stream, W statusCode: status)
 
-      expect(source.upload(path, subPath)).eql status: 201
+        expect(source.upload(path, subPath)).eql _.defaults(response, httpCode: status)
+
+    it "correct responds to uplaod response", ->
+      testUploadResponse(201, status: "uploaded")
+
+    it "correct responds to duplicated response", ->
+      testUploadResponse(403, status: "duplicated")
+
+    it "correct responds to mailformed response", ->
+      testUploadResponse(400, status: "failed", reason: "malformed")
+
+    it "correct responds to invalid response", ->
+      testUploadResponse(415, status: "failed", reason: "invalid")

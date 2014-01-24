@@ -38,7 +38,7 @@ describe "Search Engine", ->
     describe "upload cached", ->
       beforeEach -> cache = check: quickStub("z-au", W true)
 
-      it "returns cached", (engine) -> expect(engine.upload("x", "y", cache)).eql(["cached"])
+      it "returns cached", (engine) -> expect(engine.upload("x", "y", cache)).eql([status: "cached"])
 
     describe "upload uncached", ->
       beforeEach (sinon) -> cache =

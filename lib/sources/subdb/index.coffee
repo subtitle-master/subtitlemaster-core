@@ -28,7 +28,20 @@ module.exports = class SubDB
   upload: (path, subtitlePath) ->
     @hash.fromPath(path).then (hash) =>
       @api.upload(hash, @streamFromPath(subtitlePath))
-        .then ({statusCode}) -> status: statusCode
+        .then ({statusCode}) ->
+          codeMap =
+            "201":
+              status: "uploaded"
+            "403":
+              status: "duplicated"
+            "400":
+              status: "failed"
+              reason: "malformed"
+            "415":
+              status: "failed"
+              reason: "invalid"
+
+          _.defaults codeMap[statusCode.toString()], httpCode: statusCode
 
   hash: md5Edges
 

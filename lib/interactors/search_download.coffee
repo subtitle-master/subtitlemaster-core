@@ -31,7 +31,7 @@ module.exports = class SearchDownloadOperation
 
       W.all(uploads).then(
         (status) =>
-          @uploaded = true if _.include(status, "uploaded")
+          @uploaded = true if _.any(_.flatten(status), status: "uploaded")
           @runSearch()
         @reject
       )
@@ -58,6 +58,7 @@ module.exports = class SearchDownloadOperation
 
       @download(@subtitle, subtitlePath)
         .then(=> @cacheDownload(subtitlePath))
+        .then(=> @upload(@path, subtitlePath))
         .then(=> @resolve("downloaded"))
         .otherwise(@reject)
     else

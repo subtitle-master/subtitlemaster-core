@@ -15,13 +15,20 @@ module.exports = class SearchEngine
       @sources.slice(0)
     ).then -> result
 
+  # list of status for upload results
+  #
+  # uploaded
+  # cached
+  # duplicated
+  # failed
+  # not-implemented
   upload: (path, subtitlePath, cache) ->
     @uploadCacheKey(path, subtitlePath).then (cacheKey) =>
       W.all _.map @sources, (source) ->
         sourceCacheKey = cacheKey + "-#{source.id()}"
 
         cache.check(sourceCacheKey).then (isCached) =>
-          return "cached" if isCached
+          return status: "cached" if isCached
 
           source.upload(path, subtitlePath).then (result) ->
             cache.put(sourceCacheKey).then -> result

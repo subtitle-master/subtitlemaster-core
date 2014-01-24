@@ -19,7 +19,7 @@ module.exports = class OpenSubtitles
 
         new Subtitle(data[0], this)
 
-  upload: -> W null
+  upload: -> W status: "not-implemented"
 
   hash: osHash
 

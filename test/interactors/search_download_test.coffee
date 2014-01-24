@@ -66,7 +66,7 @@ describe "Search Download Operation", ->
         ], "unchanged"
 
       it "returns the uploaded status when some subtitle got uploaded", (sinon) ->
-        sinon.stub(sdp, "upload").withArgs("path", "subpath").returns(W "uploaded")
+        sdp.upload = quickStub("path", "subpath", W [status: "uploaded"])
 
         testSeach [
           [["info", info]]
@@ -121,6 +121,7 @@ describe "Search Download Operation", ->
           it "runs the entire process and return status downloaded", (sinon) ->
             sinon.stub(sdp, "download").withArgs(subtitle, "dest").returns(W null)
             sinon.stub(sdp, "cacheDownload").withArgs("dest").returns(W true)
+            sdp.upload = -> W true
 
             testSeach [
               [["info", info]]
