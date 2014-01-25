@@ -58,6 +58,7 @@ module.exports = class SearchDownloadOperation
 
       @download(@subtitle, subtitlePath)
         .then(=> @cacheDownload(subtitlePath))
+        .then(=> @notify ["share", @subtitle])
         .then(=> @upload(@path, subtitlePath))
         .then(=> @resolve("downloaded"))
         .otherwise(@reject)

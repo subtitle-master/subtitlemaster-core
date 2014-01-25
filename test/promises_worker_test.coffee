@@ -2,7 +2,7 @@ W = require("when")
 
 PromisesWorker = libRequire("promises_worker.coffee")
 
-describe "PromisesWorker", only: true, ->
+describe "PromisesWorker", ->
   lazy "worker", -> new PromisesWorker(1)
 
   class SimpleJob

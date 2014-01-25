@@ -127,4 +127,5 @@ describe "Search Download Operation", ->
               [["info", info]]
               [["search", ["pt"]]]
               [["download", subtitle]]
+              [["share", subtitle]]
             ], "downloaded"
