@@ -34,10 +34,16 @@ describe "SubDB", ->
           expect(subtitle.hash).eq INFO.hash
           expect(subtitle.source).eq source
 
-    it "currectly converts asked brazilian portuguese to pt", (api, source) ->
+    it "correctly converts asked brazilian portuguese to pt", (api, source) ->
       api.search = quickStub(INFO.hash, W ["en", "es", "fr", "it", "pt"])
 
       source.find("video.mp4", ["pb"]).then (subtitle) ->
+          expect(subtitle.language()).eq "pb"
+
+    it "return subtitle language as pt if pb wans't asked", (api, source) ->
+      api.search = quickStub(INFO.hash, W ["en", "es", "fr", "it", "pt"])
+
+      source.find("video.mp4", ["pt"]).then (subtitle) ->
           expect(subtitle.language()).eq "pt"
 
   describe "#upload", ->

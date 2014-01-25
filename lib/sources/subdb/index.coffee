@@ -13,15 +13,15 @@ module.exports = class SubDB
 
   constructor: (@api = new SubDBAPI()) ->
 
-  find: (path, languages) ->
-    languages = languages.map (lang) -> if lang == "pb" then "pt" else lang
+  find: (path, askedLanguages) ->
+    languages = askedLanguages.map (lang) -> if lang == "pb" then "pt" else lang
 
     @hash.fromPath(path).then (hash) =>
       @api.search(hash).then (foundLanguages) =>
         wanted = _.intersection(languages, foundLanguages)
 
         if wanted.length > 0
-          new Subtitle(wanted[0], hash, this)
+          new Subtitle(@sublanguage(wanted[0], askedLanguages), hash, this)
         else
           null
 
@@ -46,3 +46,7 @@ module.exports = class SubDB
   hash: md5Edges
 
   streamFromPath: (path) -> fs.createReadStream(path)
+
+  sublanguage: (current, asked) ->
+    return "pb" if current == "pt" and _.include(asked, "pb")
+    current
