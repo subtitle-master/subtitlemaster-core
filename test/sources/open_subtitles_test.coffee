@@ -1,9 +1,8 @@
 W  = require("when")
 
 OpenSubtitles = libRequire("sources/open_subtitles")
-Subtitle = libRequire("sources/open_subtitles/subtitle.coffee")
 
-describe "Open Subtitles Source", ->
+describe "Open Subtitles Source", only: true, ->
   lazy "api", -> {}
   lazy "source", (api) -> new OpenSubtitles(api)
 
@@ -19,12 +18,12 @@ describe "Open Subtitles Source", ->
 
     it "returns an item from the result as a subtitle instance", (source, api) ->
       source.hashQuery = quickStub(path, lang, W "query")
-      api.search = quickStub(["query"], W data: [data = {}])
+      source.findBest = quickStub(data = [{}], path, sub = {})
+
+      api.search = quickStub(["query"], W data: data)
 
       source.find(path, lang).then (subtitle) ->
-        expect(subtitle).instanceof(Subtitle)
-        expect(subtitle.source).eq source
-        expect(subtitle.info).eq data
+        expect(subtitle).eq sub
 
   describe "#hashQuery", ->
     lang = ["en", "pt"]
@@ -36,3 +35,19 @@ describe "Open Subtitles Source", ->
         sublanguageid: "eng,por"
         moviehash: "hash"
         moviebytesize: 123
+
+  describe "#findBest", ->
+    beforeEach (source) ->
+      source.SubtitleClass = class SimpleRankSubtitle
+        constructor: (@score, @source) ->
+        searchScore: (@path) -> @score
+
+    it "returns null when a blank list is given", (source) ->
+      expect(source.findBest([])).eql null
+
+    it "instantiate the subtitle class and return the one with the best score", (source) ->
+      best = source.findBest([1, 3, 2], "path")
+
+      expect(best.score).eq 3
+      expect(best.source).eq source
+      expect(best.path).eq "path"

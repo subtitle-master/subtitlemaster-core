@@ -17,7 +17,15 @@ module.exports = class OpenSubtitles
       @api.search([query]).then ({data}) =>
         return null unless data
 
-        new Subtitle(data[0], this)
+        @findBest(data, path)
+
+  findBest: (data, path) ->
+    return null if data.length == 0
+
+    _(data)
+      .map((s) => new @SubtitleClass(s, this))
+      .sortBy((s) => -s.searchScore(path))
+      .first()
 
   upload: -> W status: "not-implemented"
 
@@ -34,3 +42,5 @@ module.exports = class OpenSubtitles
   mapLanguages: (languages) ->
     for lang in languages
       _.find(LANG, iso639_1: lang).iso639_2b
+
+  SubtitleClass: Subtitle

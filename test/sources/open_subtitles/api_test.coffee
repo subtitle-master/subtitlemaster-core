@@ -53,7 +53,7 @@ describe "OpenSubtitles API", timeout: 10000, ->
 
       it "correctly calls the server", (api, authToken) ->
         query = [
-          sublanguageid: "eng,pob"
+          sublanguageid: "pob,eng"
           moviehash:     "cf2490e0d1ecddb6"
           moviebytesize: 833134592
         ]
