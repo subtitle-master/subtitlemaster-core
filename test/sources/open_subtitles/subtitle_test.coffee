@@ -25,7 +25,7 @@ describe "OpenSubtitles Subtitle", ->
 
     expect(sub.language()).eq "en"
 
-  describe "#searchScore", only: true, ->
+  describe "#searchScore", ->
     lazy "sub", -> new Subtitle("data")
 
     beforeEach (sub) ->

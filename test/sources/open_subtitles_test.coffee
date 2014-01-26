@@ -2,7 +2,7 @@ W  = require("when")
 
 OpenSubtitles = libRequire("sources/open_subtitles")
 
-describe "Open Subtitles Source", only: true, ->
+describe "Open Subtitles Source", ->
   lazy "api", -> {}
   lazy "source", (api) -> new OpenSubtitles(api)
 

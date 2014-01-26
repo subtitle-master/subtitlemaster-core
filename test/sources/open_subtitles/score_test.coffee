@@ -1,6 +1,6 @@
 OpenSubtitlesScore = libRequire("sources/open_subtitles/score.coffee")
 
-describe "OpenSubtitlesScore", only: true, ->
+describe "OpenSubtitlesScore", ->
   describe "#constructor", ->
     it "initializes with info", ->
       score = new OpenSubtitlesScore(info = {})
