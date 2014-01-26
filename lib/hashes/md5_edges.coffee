@@ -7,7 +7,7 @@ crypto = require("crypto")
 CHUNK_SIZE = 64 * 1024
 
 module.exports =
-  fromPath: (path) ->
+  fromPath: _.memoize (path) ->
     buffer = new Buffer(CHUNK_SIZE * 2)
 
     nodefn.call(fs.stat, path).then (stat) ->

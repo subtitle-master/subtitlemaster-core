@@ -7,7 +7,7 @@ Long   = require("long")
 CHUNK_SIZE = 64 * 1024
 
 module.exports =
-  fromPath: (path) ->
+  fromPath: _.memoize (path) ->
     nodefn.call(fs.stat, path).then (stat) ->
       fileSize = stat.size
 
