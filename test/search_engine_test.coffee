@@ -23,31 +23,18 @@ describe "Search Engine", ->
 
   beforeEach (engine) -> engine.sort = (a, b, c) -> c
 
-  describe "searching for all subtitles", ->
-    it "lookup for the first subtitle available", (engine, invoke) ->
-      expect(engine.findAll("dog", ["en"])).eql(["auuu"])
-
-    it "fallback into subsequent sources", (engine, invoke) ->
-      expect(engine.findAll("cat", ["en"])).eql(["miii"])
-
-    it "looks into multiple results", (engine) ->
-      expect(engine.findAll("doggy", ["en"])).eql(["fog", "auuu"])
-
-    it "returns empty list when nothing is found", (engine) ->
-      expect(engine.findAll("kitty", ["en"])).eql []
-
   describe "searching for subtitles", ->
     it "lookup for the first subtitle available", (engine, invoke) ->
-      expect(engine.find("dog", ["en"])).eql("auuu")
+      expect(engine.search("dog", ["en"])).eql(["auuu"])
 
     it "fallback into subsequent sources", (engine, invoke) ->
-      expect(engine.find("cat", ["en"])).eql("miii")
+      expect(engine.search("cat", ["en"])).eql(["miii"])
 
-    it "prioritize first result", (engine) ->
-      expect(engine.find("doggy", ["en"])).eql("fog")
+    it "looks into multiple results", (engine) ->
+      expect(engine.search("doggy", ["en"])).eql(["fog", "auuu"])
 
     it "returns empty list when nothing is found", (engine) ->
-      expect(engine.find("kitty", ["en"])).null
+      expect(engine.search("kitty", ["en"])).eql []
 
   describe "uploading subtitle", ->
     cache = null

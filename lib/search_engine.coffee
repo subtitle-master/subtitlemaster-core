@@ -6,10 +6,7 @@ SubtitleScore = require('./subtitle_score.coffee')
 module.exports = class SearchEngine
   constructor: (@sources = require("./sources")()) ->
 
-  find: (path, languages) => @findAll(path, languages).then (res) => _.first(res) || null
-
-  findAll: (path, languages) =>
-
+  search: (path, languages) =>
     W.map(@sources, (source) -> source.search(path, languages))
       .then((res) => @sort(path, languages, _.flatten(res)))
 

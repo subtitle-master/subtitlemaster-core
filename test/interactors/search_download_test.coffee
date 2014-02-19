@@ -21,7 +21,7 @@ describe "Search Download Operation", ->
 
   it "fails when the given path is invalid", (sinon) ->
     sdp = new SDP()
-    sinon.stub(sdp, "localInfo").returns(W.reject("err"))
+    sdp.localInfo = -> W.reject("err")
 
     testSeach([], "err", true)
 
@@ -35,8 +35,8 @@ describe "Search Download Operation", ->
         missingFrom: quickStub(['pt', 'en'], true, [])
         pathForLanguage: quickStub('en', 'path.en.srt')
 
-      sinon.stub(sdp, "initialViewPath").returns('viewPath')
-      sinon.stub(sdp, "localInfo").withArgs("path").returns(W info)
+      sdp.initialViewPath = -> 'viewPath'
+      sdp.localInfo = -> W info
 
       testSeach [
         [["info", info]]
@@ -49,13 +49,13 @@ describe "Search Download Operation", ->
           subtitles: ["pt"]
           hasSubtitles: -> true
           pathForLanguage: quickStub('pt', 'subpath')
-          missingFrom: sinon.stub().withArgs(["pt", "en"], true).returns([])
+          missingFrom: quickStub(['pt', 'en'], true, [])
 
-        sinon.stub(sdp, "initialViewPath").returns('viewPath')
-        sinon.stub(sdp, "localInfo").withArgs("path").returns(W info)
+        sdp.initialViewPath = -> 'viewPath'
+        sdp.localInfo = -> W info
 
       it "raises error when upload raises an error", (sinon) ->
-        sinon.stub(sdp, "upload").withArgs("path", "subpath").returns(W.reject "upload error")
+        sdp.upload = quickStub('subpath', W.reject 'upload error')
 
         testSeach [
           [["info", info]]
@@ -64,7 +64,7 @@ describe "Search Download Operation", ->
         ], "upload error", true
 
       it "keeps unchanged status when upload returns cached", (sinon) ->
-        sinon.stub(sdp, "upload").withArgs("path", "subpath").returns(W "cached")
+        sdp.upload = quickStub('subpath', W 'cached')
 
         testSeach [
           [["info", info]]
@@ -73,7 +73,7 @@ describe "Search Download Operation", ->
         ], "unchanged"
 
       it "returns the uploaded status when some subtitle got uploaded", (sinon) ->
-        sdp.upload = quickStub("path", "subpath", W [status: "uploaded"])
+        sdp.upload = quickStub("subpath", W [status: "uploaded"])
 
         testSeach [
           [["info", info]]
@@ -85,14 +85,14 @@ describe "Search Download Operation", ->
       beforeEach (sinon) ->
         info =
           hasSubtitles: -> false
-          missingFrom: sinon.stub().withArgs(["pt", "en"], true).returns(["pt"])
-          pathForLanguage: sinon.stub().withArgs("pt").returns("dest")
+          missingFrom: quickStub(['pt', 'en'], true, ['pt'])
+          pathForLanguage: quickStub('pt', 'dest')
 
-        sinon.stub(sdp, "initialViewPath").returns('viewPath')
-        sinon.stub(sdp, "localInfo").withArgs("path").returns(W info)
+        sdp.initialViewPath = -> 'viewPath'
+        sdp.localInfo = -> W info
 
       it "resolves into notfound when no source is able to find a new subtitle", (sinon) ->
-        sinon.stub(sdp, "search").withArgs("path", ["pt"]).returns(W null)
+        sdp.search = quickStub(['pt'], W null)
 
         testSeach [
           [["info", info]]
@@ -101,7 +101,7 @@ describe "Search Download Operation", ->
         ], "notfound"
 
       it "rejects when search fails", (sinon) ->
-        sinon.stub(sdp, "search").withArgs("path", ["pt"]).returns(W.reject "err")
+        sdp.search = quickStub(["pt"], W.reject "err")
 
         testSeach [
           [["info", info]]
@@ -117,10 +117,10 @@ describe "Search Download Operation", ->
             language: -> "pt"
             source: {id: -> "id"}
 
-          sinon.stub(sdp, "search").withArgs("path", ["pt"]).returns(W subtitle)
+          sdp.search = quickStub(["pt"], W subtitle)
 
         it "rejects when download fails", (sinon) ->
-          sinon.stub(sdp, "download").withArgs(subtitle, "dest").returns(W.reject "down err")
+          sdp.download = quickStub(subtitle, "dest", W.reject "down err")
 
           testSeach [
             [["info", info]]
@@ -131,8 +131,8 @@ describe "Search Download Operation", ->
 
         describe "given the download was complete", ->
           it "runs the entire process and return status downloaded", (sinon) ->
-            sinon.stub(sdp, "download").withArgs(subtitle, "dest").returns(W null)
-            sinon.stub(sdp, "cacheDownload").withArgs("dest").returns(W true)
+            sdp.download = quickStub(subtitle, 'dest', W null)
+            sdp.cacheDownload = quickStub("dest", W true)
             sdp.upload = -> W true
 
             testSeach [
@@ -164,3 +164,14 @@ describe "Search Download Operation", ->
           preferred: quickStub(['en'], null)
 
         expect(sdp.initialViewPath()).eq 'path.mkv'
+
+  describe 'search', ->
+    it 'records search results and return its first', ->
+      sub = {}
+
+      sdp = new SDP()
+      sdp.path = 'path.mkv'
+      sdp.engine =
+        search: quickStub('path.mkv', ['en'], [sub])
+
+      expect(sdp.search(['en'])).eq sub

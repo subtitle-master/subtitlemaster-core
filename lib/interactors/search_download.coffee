@@ -18,7 +18,7 @@ module.exports = class SearchDownloadOperation
 
   run: -> W.promise (@resolve, @reject, @notify) => @runLocalInfo()
 
-  runLocalInfo: -> @localInfo(@path).then(
+  runLocalInfo: -> @localInfo().then(
     (@info) =>
       @notify ["info", @info]
       @notify ["viewPath", @initialViewPath()]
@@ -30,7 +30,7 @@ module.exports = class SearchDownloadOperation
     if @info.hasSubtitles()
       uploads = _.map @info.subtitles, (lang) =>
         @notify ["upload", @info.pathForLanguage(lang)]
-        @upload(@path, @info.pathForLanguage(lang))
+        @upload(@info.pathForLanguage(lang))
 
       W.all(uploads).then(
         (status) =>
@@ -47,7 +47,7 @@ module.exports = class SearchDownloadOperation
     if missing.length > 0
       @notify ["search", missing]
 
-      @search(@path, missing)
+      @search(missing)
         .then((@subtitle) => @runDownload())
         .otherwise(@reject)
     else
@@ -63,7 +63,7 @@ module.exports = class SearchDownloadOperation
         .then(=> @cacheDownload(subtitlePath))
         .then(=> @notify ["viewPath", subtitlePath])
         .then(=> @notify ["share", @subtitle])
-        .then(=> @upload(@path, subtitlePath))
+        .then(=> @upload(subtitlePath))
         .then(=> @resolve("downloaded"))
         .otherwise(@reject)
     else
@@ -72,15 +72,19 @@ module.exports = class SearchDownloadOperation
   cacheDownload: (subtitlePath) ->
     @engine.cacheDownload(@cache, @path, subtitlePath, @subtitle.source.id())
 
-  localInfo: (path) -> localInfo(path)
-  search: (path, missing) -> @engine.find(path, missing)
+  localInfo: => localInfo(@path)
+
+  search: (missing) =>
+    searchResults = @engine.search(@path, missing)
+    _.first(searchResults) || null
+
   download: (subtitle, destination) ->
     source = subtitle.contentStream()
     target = fs.createWriteStream(destination)
 
     util.promisedPipe(source, target)
 
-  upload: (path, subtitlePath) -> @engine.upload(path, subtitlePath, @cache)
+  upload: (subtitlePath) -> @engine.upload(@path, subtitlePath, @cache)
 
   initialViewPath: ->
     preferred = @info.preferred(@languages)
