@@ -13,17 +13,14 @@ module.exports = class SubDB
 
   constructor: (@api = new SubDBAPI()) ->
 
-  find: (path, askedLanguages) ->
+  search: (path, askedLanguages) ->
     languages = askedLanguages.map (lang) -> if lang == "pb" then "pt" else lang
 
     @hash.fromPath(path).then (hash) =>
       @api.search(hash).then (foundLanguages) =>
         wanted = _.intersection(languages, foundLanguages)
 
-        if wanted.length > 0
-          new Subtitle(@sublanguage(wanted[0], askedLanguages), hash, this)
-        else
-          null
+        _.map(wanted, (lang) => new Subtitle(@sublanguage(lang, askedLanguages), hash, this))
 
   upload: (path, subtitlePath) ->
     @hash.fromPath(path).then (hash) =>

@@ -1,19 +1,14 @@
-_      = require("lodash")
-W      = require("when")
-unfold = require("when/unfold")
+_ = require("lodash")
+W = require("when")
 
 module.exports = class SearchEngine
   constructor: (@sources = require("./sources")()) ->
 
-  find: (path, languages) ->
-    result = null
+  find: (path, languages) -> @findAll(path, languages).then (res) -> _.first(res) || null
 
-    unfold(
-      (seed) -> [seed.shift(), seed]
-      (seed) -> result or seed.length == 0
-      (source) -> source.find(path, languages).then (res) -> result = res
-      @sources.slice(0)
-    ).then -> result
+  findAll: (path, languages) ->
+    W.map(@sources, (source) -> source.search(path, languages))
+      .then((res) -> _.flatten(res))
 
   # list of status for upload results
   #

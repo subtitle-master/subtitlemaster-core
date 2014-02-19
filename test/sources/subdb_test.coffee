@@ -14,21 +14,21 @@ describe "SubDB", ->
     it "has the source name", (source) -> expect(source.name()).string "SubDB"
     it "has the source website", (source) -> expect(source.website()).string "http://thesubdb.com"
 
-  describe "#find", ->
+  describe "#search", ->
     lazy "source", (source) ->
       source.hash = fromPath: -> W INFO.hash
       source
 
-    it "returns null if there is no subtitle in request language", (source, api) ->
+    it "returns blank list if there is no subtitle in request language", (source, api) ->
       api.search = quickStub(INFO.hash, W [])
 
-      expect(source.find("video.mp4", ["pb"])).null
+      expect(source.search("video.mp4", ["pb"])).eql []
 
-    it "find subtitle", (api, source) ->
+    it "search subtitle", (api, source) ->
       api.search = quickStub(INFO.hash, W ["en", "es", "fr", "it", "pt"])
 
-      source.find("video.mp4", ["en", "pb", "pt"])
-        .then (subtitle) ->
+      source.search("video.mp4", ["en", "pb", "pt"])
+        .then ([subtitle]) ->
           expect(subtitle).instanceof Subtitle
           expect(subtitle.language()).eq "en"
           expect(subtitle.hash).eq INFO.hash
@@ -37,13 +37,13 @@ describe "SubDB", ->
     it "correctly converts asked brazilian portuguese to pt", (api, source) ->
       api.search = quickStub(INFO.hash, W ["en", "es", "fr", "it", "pt"])
 
-      source.find("video.mp4", ["pb"]).then (subtitle) ->
+      source.search("video.mp4", ["pb"]).then ([subtitle]) ->
           expect(subtitle.language()).eq "pb"
 
     it "return subtitle language as pt if pb wans't asked", (api, source) ->
       api.search = quickStub(INFO.hash, W ["en", "es", "fr", "it", "pt"])
 
-      source.find("video.mp4", ["pt"]).then (subtitle) ->
+      source.search("video.mp4", ["pt"]).then ([subtitle]) ->
           expect(subtitle.language()).eq "pt"
 
   describe "#upload", ->

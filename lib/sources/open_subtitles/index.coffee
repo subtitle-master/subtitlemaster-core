@@ -12,20 +12,20 @@ module.exports = class OpenSubtitles
 
   constructor: (@api) ->
 
-  find: (path, languages) ->
+  search: (path, languages) ->
     @hashQuery(path, languages).then (query) =>
       @api.search([query]).then ({data}) =>
-        return null unless data
+        return [] unless data
 
-        @findBest(data, path)
+        _.map(data, (s) => new @SubtitleClass(s, this))
 
-  findBest: (data, path) ->
-    return null if data.length == 0
+  # findBest: (data, path) ->
+  #   return null if data.length == 0
 
-    _(data)
-      .map((s) => new @SubtitleClass(s, this))
-      .sortBy((s) => -s.searchScore(path))
-      .first()
+  #   _(data)
+  #     .map((s) => new @SubtitleClass(s, this))
+  #     .sortBy((s) => -s.searchScore(path))
+  #     .first()
 
   upload: -> W status: "not-implemented"
 

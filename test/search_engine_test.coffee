@@ -8,26 +8,43 @@ factorySubtitle = (contents) -> contents: -> W(contents)
 factorySource = (pattern, contents) ->
   id: -> contents
 
-  find: (path, languages) =>
+  search: (path, languages) =>
     if path.match(pattern)
-      W factorySubtitle(contents)
+      W [contents]
     else
-      W null
+      W []
 
 describe "Search Engine", ->
-  describe "searching for a single result", ->
-    lazy "engine", -> new SearchEngine([
-      factorySource(/dog/, "auuu")
-      factorySource(/cat/, "miii")
-    ])
+  lazy "engine", -> new SearchEngine([
+    factorySource(/doggy/, "fog")
+    factorySource(/dog/, "auuu")
+    factorySource(/cat/, "miii")
+  ])
 
+  describe "searching for subtitles", ->
     it "lookup for the first subtitle available", (engine, invoke) ->
-      expect(engine.find("dog", ["en"]).then(invoke "contents")).eq("auuu")
+      expect(engine.findAll("dog", ["en"])).eql(["auuu"])
 
     it "fallback into subsequent sources", (engine, invoke) ->
-      expect(engine.find("cat", ["en"]).then(invoke "contents")).eq("miii")
+      expect(engine.findAll("cat", ["en"])).eql(["miii"])
 
-    it "returns null when nothing is found", (engine) ->
+    it "looks into multiple results", (engine) ->
+      expect(engine.findAll("doggy", ["en"])).eql(["fog", "auuu"])
+
+    it "returns empty list when nothing is found", (engine) ->
+      expect(engine.findAll("kitty", ["en"])).eql []
+
+  describe "searching for subtitles", ->
+    it "lookup for the first subtitle available", (engine, invoke) ->
+      expect(engine.find("dog", ["en"])).eql("auuu")
+
+    it "fallback into subsequent sources", (engine, invoke) ->
+      expect(engine.find("cat", ["en"])).eql("miii")
+
+    it "prioritize first result", (engine) ->
+      expect(engine.find("doggy", ["en"])).eql("fog")
+
+    it "returns empty list when nothing is found", (engine) ->
       expect(engine.find("kitty", ["en"])).null
 
   describe "uploading subtitle", ->
