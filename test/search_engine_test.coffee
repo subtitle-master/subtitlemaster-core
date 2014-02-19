@@ -21,7 +21,9 @@ describe "Search Engine", ->
     factorySource(/cat/, "miii")
   ])
 
-  describe "searching for subtitles", ->
+  beforeEach (engine) -> engine.sort = (a, b, c) -> c
+
+  describe "searching for all subtitles", ->
     it "lookup for the first subtitle available", (engine, invoke) ->
       expect(engine.findAll("dog", ["en"])).eql(["auuu"])
 

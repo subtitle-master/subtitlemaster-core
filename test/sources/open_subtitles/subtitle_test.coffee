@@ -24,22 +24,3 @@ describe "OpenSubtitles Subtitle", ->
     sub = new Subtitle(SubLanguageID: "eng")
 
     expect(sub.language()).eq "en"
-
-  describe "#searchScore", ->
-    lazy "sub", -> new Subtitle("data")
-
-    beforeEach (sub) ->
-      sub.callCount = 0
-      sub.ScoreClass = class
-        constructor: (@info) ->
-          sub.callCount += 1
-        score: -> @info
-
-    it "sends current data to the search score and return it", (sub) ->
-      expect(sub.searchScore()).eq "data"
-
-    it "caches the score", (sub) ->
-      sub.searchScore()
-      sub.searchScore()
-
-      expect(sub.callCount).eq 1
