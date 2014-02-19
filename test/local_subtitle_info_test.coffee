@@ -58,3 +58,11 @@ describe "Local Subtitle Info", ->
 
     it "returns a filtered list with unavaiable languages discarding right", (info) ->
       expect(info.missingFrom(["pb", "es", "en", "pt"], true)).to.eql(["pb", "es"])
+
+  describe "path with multiple localized subtitles", ->
+    lazy "path", -> "famous.mkv"
+
+    it "return the highest priority", (info) ->
+      expect(info.preferred(["pb", "en", "pt", "es"])).eq "en"
+      expect(info.preferred(["pt", "en", "pb", "es"])).eq "pt"
+      expect(info.preferred(["pb", "es"])).eq null

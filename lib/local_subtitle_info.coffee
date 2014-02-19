@@ -14,6 +14,8 @@ class SubtitleInfo
 
   hasSubtitles: -> @subtitles.length > 0
 
+  preferred: (desired) -> _.find(desired, (sub) => _.include(@subtitles, sub)) || null
+
   pathForLanguage: (language) ->
     if language
       "#{@basepath}.#{language}.srt"

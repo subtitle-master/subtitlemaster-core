@@ -19,7 +19,10 @@ module.exports = class SearchDownloadOperation
   run: -> W.promise (@resolve, @reject, @notify) => @runLocalInfo()
 
   runLocalInfo: -> @localInfo(@path).then(
-    (@info) => @notify ["info", @info]; @runUpload()
+    (@info) =>
+      @notify ["info", @info]
+      @notify ["viewPath", @initialViewPath()]
+      @runUpload()
     @reject
   )
 
@@ -58,6 +61,7 @@ module.exports = class SearchDownloadOperation
 
       @download(@subtitle, subtitlePath)
         .then(=> @cacheDownload(subtitlePath))
+        .then(=> @notify ["viewPath", subtitlePath])
         .then(=> @notify ["share", @subtitle])
         .then(=> @upload(@path, subtitlePath))
         .then(=> @resolve("downloaded"))
@@ -77,3 +81,8 @@ module.exports = class SearchDownloadOperation
     util.promisedPipe(source, target)
 
   upload: (path, subtitlePath) -> @engine.upload(path, subtitlePath, @cache)
+
+  initialViewPath: ->
+    preferred = @info.preferred(@languages)
+
+    if preferred then @info.pathForLanguage(preferred) else @path

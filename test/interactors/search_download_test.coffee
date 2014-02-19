@@ -1,6 +1,7 @@
 _   = require("lodash")
 W   = require("when")
 SDP = libRequire("interactors/search_download")
+sinon = require("sinon")
 
 describe "Search Download Operation", ->
   sdp  = null
@@ -31,12 +32,15 @@ describe "Search Download Operation", ->
     it "resolves into unchanged when all wanted subtitles are available", (sinon) ->
       info =
         hasSubtitles: -> false
-        missingFrom: sinon.stub().withArgs(["pt", "en"], true).returns([])
+        missingFrom: quickStub(['pt', 'en'], true, [])
+        pathForLanguage: quickStub('en', 'path.en.srt')
 
+      sinon.stub(sdp, "initialViewPath").returns('viewPath')
       sinon.stub(sdp, "localInfo").withArgs("path").returns(W info)
 
       testSeach [
         [["info", info]]
+        [["viewPath", "viewPath"]]
       ], "unchanged"
 
     describe "given there are files to upload", ->
@@ -44,9 +48,10 @@ describe "Search Download Operation", ->
         info =
           subtitles: ["pt"]
           hasSubtitles: -> true
-          pathForLanguage: sinon.stub().withArgs("pt").returns("subpath")
+          pathForLanguage: quickStub('pt', 'subpath')
           missingFrom: sinon.stub().withArgs(["pt", "en"], true).returns([])
 
+        sinon.stub(sdp, "initialViewPath").returns('viewPath')
         sinon.stub(sdp, "localInfo").withArgs("path").returns(W info)
 
       it "raises error when upload raises an error", (sinon) ->
@@ -54,6 +59,7 @@ describe "Search Download Operation", ->
 
         testSeach [
           [["info", info]]
+          [["viewPath", "viewPath"]]
           [["upload", "subpath"]]
         ], "upload error", true
 
@@ -62,6 +68,7 @@ describe "Search Download Operation", ->
 
         testSeach [
           [["info", info]]
+          [["viewPath", "viewPath"]]
           [["upload", "subpath"]]
         ], "unchanged"
 
@@ -70,6 +77,7 @@ describe "Search Download Operation", ->
 
         testSeach [
           [["info", info]]
+          [["viewPath", "viewPath"]]
           [["upload", "subpath"]]
         ], "uploaded"
 
@@ -80,6 +88,7 @@ describe "Search Download Operation", ->
           missingFrom: sinon.stub().withArgs(["pt", "en"], true).returns(["pt"])
           pathForLanguage: sinon.stub().withArgs("pt").returns("dest")
 
+        sinon.stub(sdp, "initialViewPath").returns('viewPath')
         sinon.stub(sdp, "localInfo").withArgs("path").returns(W info)
 
       it "resolves into notfound when no source is able to find a new subtitle", (sinon) ->
@@ -87,6 +96,7 @@ describe "Search Download Operation", ->
 
         testSeach [
           [["info", info]]
+          [["viewPath", "viewPath"]]
           [["search", ["pt"]]]
         ], "notfound"
 
@@ -95,6 +105,7 @@ describe "Search Download Operation", ->
 
         testSeach [
           [["info", info]]
+          [["viewPath", "viewPath"]]
           [["search", ["pt"]]]
         ], "err", true
 
@@ -113,6 +124,7 @@ describe "Search Download Operation", ->
 
           testSeach [
             [["info", info]]
+            [["viewPath", "viewPath"]]
             [["search", ["pt"]]]
             [["download", subtitle]]
           ], "down err", true
@@ -125,7 +137,30 @@ describe "Search Download Operation", ->
 
             testSeach [
               [["info", info]]
+              [["viewPath", "viewPath"]]
               [["search", ["pt"]]]
               [["download", subtitle]]
+              [["viewPath", "dest"]]
               [["share", subtitle]]
             ], "downloaded"
+
+  describe 'initialViewPath', ->
+    describe 'given there is preferred language', ->
+      it 'returns the path for that language', ->
+        sdp = new SDP()
+        sdp.languages = ['en']
+        sdp.info =
+          preferred: quickStub(['en'], 'en')
+          pathForLanguage: quickStub('en', 'viewPath')
+
+        expect(sdp.initialViewPath()).eq 'viewPath'
+
+    describe 'given there is no preferred language', ->
+      it 'returns the path for the file', ->
+        sdp = new SDP()
+        sdp.path = 'path.mkv'
+        sdp.languages = ['en']
+        sdp.info =
+          preferred: quickStub(['en'], null)
+
+        expect(sdp.initialViewPath()).eq 'path.mkv'
