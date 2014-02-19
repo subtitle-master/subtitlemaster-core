@@ -6,7 +6,7 @@ PromisesWorker = require("../../promises_worker.coffee")
 module.exports = class OpenSubtitlesAPI
   constructor: (@userAgent) ->
     @client = xmlrpc.createClient(host: "api.opensubtitles.org", path: "/xml-rpc")
-    @worker = new PromisesWorker(5, timeout: 5000)
+    @worker = new PromisesWorker(5, timeout: 15000)
 
   auth: ->
     @LogIn().then ({status, token}) =>

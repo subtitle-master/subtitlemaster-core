@@ -9,7 +9,7 @@ UA = "SubDB/1.0 (Subtitle Master/2.0.0b; http://subtitlemaster.com)"
 
 module.exports = class SubDBAPI
   constructor: (@endpoint = "http://api.thesubdb.com/") ->
-    @worker = new PromisesWorker(5, timeout: 5000)
+    @worker = new PromisesWorker(5, timeout: 15000)
 
   search: (hash) -> @get("search", hash: hash, versions: "").then ([r, body]) ->
     body.split(",").map (v) ->
