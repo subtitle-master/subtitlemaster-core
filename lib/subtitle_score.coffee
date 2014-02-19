@@ -11,4 +11,4 @@ module.exports = class SubtitleScore
   scoreLanguage: (subtitle) =>
     currentLanguage = subtitle.language()
 
-    (@languages.indexOf(currentLanguage) + 1) * 10000
+    subtitle.score ||= (@languages.indexOf(currentLanguage) + 1) * 10000
