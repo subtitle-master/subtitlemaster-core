@@ -10,3 +10,7 @@ describe "SubDBSubtitle", ->
   it "returns the language as a function", ->
     sub = new Subtitle(lang = "en")
     expect(sub.language()).eq lang
+
+  it "toString", ->
+    sub = new Subtitle("en", "hash", 0, null)
+    expect(sub.toString()).eq 'SubDB Subtitle hash v0'

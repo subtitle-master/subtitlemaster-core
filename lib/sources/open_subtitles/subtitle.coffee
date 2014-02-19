@@ -10,3 +10,6 @@ module.exports = class OpenSubtitlesSubtitle
   contentStream: -> request.get(@info.SubDownloadLink).pipe(zlib.createGunzip())
 
   language: -> _.find(LANG, iso639_2b: @info.SubLanguageID).iso639_1
+  hash: -> @info.MovieHash
+
+  toString: -> "OpenSubtitles Subtitle #{@hash()}"

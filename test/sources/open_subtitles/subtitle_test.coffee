@@ -24,3 +24,13 @@ describe "OpenSubtitles Subtitle", ->
     sub = new Subtitle(SubLanguageID: "eng")
 
     expect(sub.language()).eq "en"
+
+  it 'returns the hash', ->
+    sub = new Subtitle(MovieHash: "hash")
+
+    expect(sub.hash()).eq "hash"
+
+  it 'toString', ->
+    sub = new Subtitle(MovieHash: "hash")
+
+    expect(sub.toString()).eq 'OpenSubtitles Subtitle hash'
