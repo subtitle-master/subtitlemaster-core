@@ -24,27 +24,33 @@ describe "SubDB", ->
 
       expect(source.search("video.mp4", ["pb"])).eql []
 
-    it "search subtitle", (api, source) ->
-      api.search = quickStub(INFO.hash, W ["en", "es", "fr", "it", "pt"])
+    describe 'with results', ->
+      sr = (language, count) -> {language, count}
 
-      source.search("video.mp4", ["en", "pb", "pt"])
-        .then ([subtitle]) ->
-          expect(subtitle).instanceof Subtitle
-          expect(subtitle.language()).eq "en"
-          expect(subtitle.hash).eq INFO.hash
-          expect(subtitle.source).eq source
+      beforeEach (api) ->
+        api.search = quickStub(INFO.hash, W [sr('en', 1), sr('es', 1), sr('fr', 1), sr('it', 1), sr('pt', 1)])
 
-    it "correctly converts asked brazilian portuguese to pt", (api, source) ->
-      api.search = quickStub(INFO.hash, W ["en", "es", "fr", "it", "pt"])
+      it "search subtitle", (api, source) ->
+        source.search("video.mp4", ["en", "pb", "pt"])
+          .then ([subtitle]) ->
+            expect(subtitle).instanceof Subtitle
+            expect(subtitle.language()).eq "en"
+            expect(subtitle.hash).eq INFO.hash
+            expect(subtitle.source).eq source
+            expect(subtitle.version).eq 0
 
-      source.search("video.mp4", ["pb"]).then ([subtitle]) ->
-          expect(subtitle.language()).eq "pb"
+      it "correctly converts asked brazilian portuguese to pt", (api, source) ->
+        source.search("video.mp4", ["pb"]).then ([subtitle]) ->
+            expect(subtitle.language()).eq "pb"
 
-    it "return subtitle language as pt if pb wans't asked", (api, source) ->
-      api.search = quickStub(INFO.hash, W ["en", "es", "fr", "it", "pt"])
+      it "return subtitle language as pt if pb wans't asked", (api, source) ->
+        source.search("video.mp4", ["pt"]).then ([subtitle]) ->
+            expect(subtitle.language()).eq "pt"
 
-      source.search("video.mp4", ["pt"]).then ([subtitle]) ->
-          expect(subtitle.language()).eq "pt"
+      it "gets multiple results", (api, source) ->
+        api.search = quickStub(INFO.hash, W [sr('en', 3), sr('es', 1), sr('fr', 2), sr('it', 1), sr('pt', 2)])
+        source.search("video.mp4", ['en', "pt"]).then (subtitles) ->
+          expect(subtitles).length(5)
 
   describe "#upload", ->
     testUploadResponse = (status, response) ->

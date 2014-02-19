@@ -19,12 +19,17 @@ describe "SubDBAPI", skip: true, ->
     lazy "api", -> new API("http://sandbox.thesubdb.com/")
 
     it "searches for the subtitle", (api) ->
-      expect(api.search(HASH)).eql ['en', 'es', 'fr', 'it', 'pt']
+      expect(api.search(HASH)).eql [
+        {language: 'en', count: 1}
+        {language: 'es', count: 1}
+        {language: 'fr', count: 1}
+        {language: 'it', count: 1}
+        {language: 'pt', count: 2}]
 
     it "downloads a subtitle", (api) ->
       content = fs.readFileSync(fixture "subdb-download.srt", encoding: "utf8")
 
-      expect(readStream(api.download(HASH, "en"))).string(content)
+      expect(readStream(api.download(HASH, "en", 0))).string(content)
 
     it "uploads a subtitle", (api) ->
       hash = "edc1981d6459c6111fe36205b4aff6c3"

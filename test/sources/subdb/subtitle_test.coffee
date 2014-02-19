@@ -2,8 +2,8 @@ Subtitle = libRequire("sources/subdb/subtitle.coffee")
 
 describe "SubDBSubtitle", ->
   it "do the correct request for the download", ->
-    request = quickStub(hash = "hash", lang = "en", stream = "STREAM")
-    sub = new Subtitle(lang, hash, {api: {download: request}})
+    request = quickStub(hash = "hash", lang = "en", version = 1, stream = "STREAM")
+    sub = new Subtitle(lang, hash, version, {api: {download: request}})
 
     expect(sub.contentStream()).eq stream
 

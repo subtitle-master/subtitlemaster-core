@@ -11,9 +11,12 @@ module.exports = class SubDBAPI
   constructor: (@endpoint = "http://api.thesubdb.com/") ->
     @worker = new PromisesWorker(5, timeout: 5000)
 
-  search: (hash) -> @get("search", hash: hash).then ([r, body]) -> body.split(",")
+  search: (hash) -> @get("search", hash: hash, versions: "").then ([r, body]) ->
+    body.split(",").map (v) ->
+      [language, count] = v.split(':')
+      {language, count: parseInt(count)}
 
-  download: (hash, lang) -> request(@query("download", hash: hash, language: lang))
+  download: (hash, language, version) -> request(@query("download", {hash, language, version}))
 
   upload: (hash, stream) ->
     @post "upload", (form) ->

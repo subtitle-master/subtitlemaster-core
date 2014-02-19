@@ -18,9 +18,12 @@ module.exports = class SubDB
 
     @hash.fromPath(path).then (hash) =>
       @api.search(hash).then (foundLanguages) =>
-        wanted = _.intersection(languages, foundLanguages)
+        _.tap [], (subtitles) =>
+          for {language, count} in foundLanguages
+            continue unless _.include(languages, language)
 
-        _.map(wanted, (lang) => new Subtitle(@sublanguage(lang, askedLanguages), hash, this))
+            for version in [0...count]
+              subtitles.push(new Subtitle(@sublanguage(language, askedLanguages), hash, version, this))
 
   upload: (path, subtitlePath) ->
     @hash.fromPath(path).then (hash) =>
