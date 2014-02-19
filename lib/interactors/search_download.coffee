@@ -75,8 +75,8 @@ module.exports = class SearchDownloadOperation
   localInfo: => localInfo(@path)
 
   search: (missing) =>
-    searchResults = @engine.search(@path, missing)
-    _.first(searchResults) || null
+    @engine.search(@path, missing).then (searchResults) ->
+      _.first(searchResults) || null
 
   download: (subtitle, destination) ->
     source = subtitle.contentStream()

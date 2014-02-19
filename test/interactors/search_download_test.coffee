@@ -172,6 +172,6 @@ describe "Search Download Operation", ->
       sdp = new SDP()
       sdp.path = 'path.mkv'
       sdp.engine =
-        search: quickStub('path.mkv', ['en'], [sub])
+        search: quickStub('path.mkv', ['en'], W [sub])
 
       expect(sdp.search(['en'])).eq sub
