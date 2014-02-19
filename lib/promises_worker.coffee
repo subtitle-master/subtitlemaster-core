@@ -1,22 +1,23 @@
-W = require("when")
+W       = require("when")
+timeout = require("when/timeout")
 
 module.exports = class PromisesWorker
-  constructor: (@limit) ->
+  constructor: (@limit, {@timeout} = {}) ->
     @workingCount = 0
     @queue = []
 
-  push: (job) ->
+  push: (job) =>
     if @workingCount < @limit
       @workingCount += 1
 
-      @wrapPromise(job.run())
+      @wrapPromise(@_setTimeout(job.run()))
     else
       defer = W.defer()
       @queue.push(job: job, defer: defer)
 
       defer.promise
 
-  wrapPromise: (promise) ->
+  wrapPromise: (promise) =>
     W.promise (resolve, reject, notify) =>
       promise.then(
         (res) =>
@@ -30,10 +31,12 @@ module.exports = class PromisesWorker
         (msg) => notify(msg)
       )
 
-  workerDone: ->
+  workerDone: =>
     @workingCount -= 1
 
     if @queue.length
       {job, defer} = @queue.shift()
 
       defer.resolve(@push(job))
+
+  _setTimeout: (promise) => if @timeout then timeout(@timeout, promise) else promise

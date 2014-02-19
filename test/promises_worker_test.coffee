@@ -1,4 +1,5 @@
 W = require("when")
+delay = require("when/delay")
 
 PromisesWorker = libRequire("promises_worker.coffee")
 
@@ -63,3 +64,13 @@ describe "PromisesWorker", ->
     defer2.resolve("two")
 
     res2.then (res) -> expect(res).eq "two"
+
+  it "timeout when asked", ->
+    defer1 = W.defer()
+
+    worker = new PromisesWorker(1, timeout: 10)
+    worker.push(new SimpleJob(-> W.defer().promise))
+    worker.push(job = new SimpleJob(-> defer1.promise))
+
+    delay(50, null).then ->
+      expect(job.started).true
