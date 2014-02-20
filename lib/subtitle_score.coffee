@@ -3,8 +3,8 @@ _ = require('lodash')
 negate = (fn) -> (value) -> -fn(value)
 
 module.exports = class SubtitleScore
-  constructor: (@path, @languages) ->
-    @languages.reverse()
+  constructor: (@path, languages) ->
+    @languages = _.clone(languages).reverse()
 
   sort: (subtitles) => _.sortBy(subtitles, negate(@scoreLanguage))
 
