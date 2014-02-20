@@ -36,6 +36,15 @@ describe "Search Engine", ->
     it "returns empty list when nothing is found", (engine) ->
       expect(engine.search("kitty", ["en"])).eql []
 
+    it "ignores fails on sources", ->
+      validSource = search: -> W ['one', 'two']
+      failSource = search: -> W.reject(new Error("error"))
+
+      engine = new SearchEngine([failSource, validSource])
+      engine.sort = (a, b, c) -> c
+
+      expect(engine.search('what', ['ever'])).eql ['one', 'two']
+
   describe "uploading subtitle", ->
     cache = null
     lazy "engine", -> _.tap new SearchEngine([factorySource(/dog/, "au")]), (engine) ->

@@ -7,10 +7,10 @@ module.exports = class SearchEngine
   constructor: (@sources = require("./sources")()) ->
 
   search: (path, languages) =>
-    W.map(@sources, (source) -> source.search(path, languages))
-      .then((res) => @sort(path, languages, _.flatten(res)))
+    sort = _.partial(@sort, path, languages)
+    @_searchOnSources(path, languages).then(sort)
 
-  sort: (path, languages, subtitles) -> new SubtitleScore(path, languages).sort(subtitles)
+  sort: (path, languages, subtitles) => new SubtitleScore(path, languages).sort(subtitles)
 
   # list of status for upload results
   #
@@ -38,3 +38,9 @@ module.exports = class SearchEngine
 
   md5Edges: require("./hashes/md5_edges.coffee").fromPath
   md5:      require("./hashes/md5.coffee").fromPath
+
+  _searchOnSources: (path, languages) =>
+    searches = _.map @sources, (source) => source.search(path, languages)
+
+    W.settle(searches).then (results) =>
+      _(results).filter(state: 'fulfilled').map('value').flatten().value()
