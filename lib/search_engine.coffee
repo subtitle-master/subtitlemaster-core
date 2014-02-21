@@ -1,6 +1,7 @@
 _ = require("lodash")
 W = require("when")
 
+util = require("./util.coffee")
 SubtitleScore = require('./subtitle_score.coffee')
 
 module.exports = class SearchEngine
@@ -42,5 +43,4 @@ module.exports = class SearchEngine
   _searchOnSources: (path, languages) =>
     searches = _.map @sources, (source) => source.search(path, languages)
 
-    W.settle(searches).then (results) =>
-      _(results).filter(state: 'fulfilled').map('value').flatten().value()
+    util.allFulfilled(searches).then(_.flatten)
