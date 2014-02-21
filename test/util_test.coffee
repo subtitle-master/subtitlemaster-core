@@ -1,5 +1,6 @@
-_ = require("lodash")
-util = libRequire("util")
+_      = require("lodash")
+W      = require("when")
+util   = libRequire("util")
 Stream = require("stream")
 
 describe "Utilities", ->
@@ -29,3 +30,14 @@ describe "Utilities", ->
     it "converts object maps into URL query", ->
       expect(hashToUrlParams({a: "b"})).eq "a=b"
       expect(hashToUrlParams({a: "b", c: "d"})).eq "a=b&c=d"
+
+  describe "allFulfilled", ->
+    {allFulfilled} = util
+
+    err = -> W.reject(new Error("error"))
+
+    it "resolves fulfilled promises and filter others", ->
+      expect(allFulfilled([])).eql []
+      expect(allFulfilled([W 1])).eql [1]
+      expect(allFulfilled([err()])).eql []
+      expect(allFulfilled([W(2), err(), err(), W(3)])).eql [2, 3]

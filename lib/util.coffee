@@ -1,3 +1,4 @@
+_ = require("lodash")
 W = require("when")
 
 module.exports =
@@ -14,3 +15,10 @@ module.exports =
       string.push("#{key}=#{value}")
 
     string.join("&")
+
+  allFulfilled: (promises) ->
+    W.settle(promises).then (res) ->
+      _(res)
+        .filter(state: 'fulfilled')
+        .map('value')
+        .value()
