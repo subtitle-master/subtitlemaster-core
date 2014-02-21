@@ -15,7 +15,7 @@ lazy "invoke", -> (method, args...) -> (obj) -> obj[method](args...)
 global.libRequire = (libPath) -> require(path.join("..", "lib", libPath))
 global.fixture = (fixture) -> path.join __dirname, "fixtures", fixture
 global.quickStub = (args..., result) -> (calledArgs...) ->
-  expect(calledArgs).eql(args)
+  expect(calledArgs.slice(0, args.length)).eql(args)
   result
 
 _ = require("lodash")
