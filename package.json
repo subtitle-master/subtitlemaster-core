@@ -22,7 +22,8 @@
     "request": "~2.27.0",
     "when": "~2.6.0",
     "long": "~1.1.2",
-    "xmlrpc": "~1.1.1"
+    "xmlrpc": "~1.1.1",
+    "temp": "~0.6.0"
   },
   "devDependencies": {
     "barriertest": "~0.2.5",
