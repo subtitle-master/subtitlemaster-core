@@ -23,7 +23,8 @@
     "when": "~2.6.0",
     "long": "~1.1.2",
     "xmlrpc": "~1.1.1",
-    "temp": "~0.6.0"
+    "temp": "~0.6.0",
+    "mkdirp": "~0.3.5"
   },
   "devDependencies": {
     "barriertest": "~0.2.5",
