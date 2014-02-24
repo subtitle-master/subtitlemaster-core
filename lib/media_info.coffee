@@ -1,5 +1,7 @@
+Path = require('path')
+
 module.exports = class MediaInfo
-  MATCH_REGXP = /(.+)\sS(\d{2})/i
+  MATCH_REGXP = /(.+)\sS(\d{2})E\d{2}/i
 
   from: (path) ->
     return null if @_isSample(path)
@@ -11,6 +13,6 @@ module.exports = class MediaInfo
     else
       null
 
-  _normalize: (path) -> path.replace(/\./g, ' ')
+  _normalize: (path) -> Path.basename(path.replace(/\./g, ' '))
 
   _isSample: (path) -> path.indexOf('sample') >= 0
