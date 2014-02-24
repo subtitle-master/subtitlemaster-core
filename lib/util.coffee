@@ -1,4 +1,4 @@
-{Readable, Writable} = require("stream")
+{Readable, Writable, Transform} = require("stream")
 fs         = require("fs")
 path = require('path')
 
@@ -52,6 +52,14 @@ class ListWriteStream extends Writable
     @items.push(chunk)
     callback()
 
+class TransformStream extends Transform
+  constructor: (@transformer) -> super(objectMode: true)
+
+  _transform: (chunk, encoding, callback) ->
+    W(@transformer(this, chunk))
+      .then(-> callback())
+      .otherwise((err) => @emit('error', err))
+
 module.exports =
   promisedPipe: (input, output) ->
     defer = W.defer()
@@ -85,3 +93,5 @@ module.exports =
   directoryStream: (path) -> new DirectoryReadStream(path)
 
   writeObjectsStream: -> new ListWriteStream()
+
+  transformStream: (fn) -> new TransformStream(fn)
