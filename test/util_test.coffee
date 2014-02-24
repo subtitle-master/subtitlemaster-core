@@ -2,7 +2,6 @@ _      = require("lodash")
 W      = require("when")
 util   = libRequire("util")
 Stream = require("stream")
-concat = require("concat-stream")
 
 describe "Utilities", ->
   describe "promisedPipe", ->
