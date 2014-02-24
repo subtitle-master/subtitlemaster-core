@@ -20,6 +20,9 @@ global.quickStub = (args..., result) -> (calledArgs...) ->
 
 _ = require("lodash")
 fs = require("fs")
+{chai} = require("barriertest")
+
+chai.use(require("./matchers.coffee"))
 
 class Flagger
   constructor: (@target) -> @target.__flags ||= {}
@@ -35,3 +38,5 @@ skipFlags = (flagsToSkip...) -> (test) ->
 
 if fs.existsSync(path.join(__dirname, "..", "tmp", "quicktest"))
   BarrierRunner.on "test", skipFlags("remote")
+
+
