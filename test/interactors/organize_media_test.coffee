@@ -2,7 +2,7 @@ W = require('when')
 
 OrganizeMedia = libRequire('interactors/organize_media.coffee')
 
-describe 'OrganizeMedia', only: true, ->
+describe 'OrganizeMedia', ->
   it 'returns blank for blank directory', ->
     organizer = new OrganizeMedia()
 
@@ -10,14 +10,6 @@ describe 'OrganizeMedia', only: true, ->
     target = fixture('scanner/empty')
 
     expect(organizer.scan(source, target)).eql []
-
-  # it 'organizes media', ->
-  #   organizer = new OrganizeMedia()
-
-  #   source = fixture('scanner/flat')
-  #   target = fixture('scanner/empty')
-
-  #   expect(organizer.scan(source, target)).eql []
 
   describe 'readTargetShows', ->
     it 'returns the directories from a path', ->

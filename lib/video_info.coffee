@@ -1,6 +1,6 @@
 parseVideoInfo = require("./video_info_parser")
 
-module.exports = class
+module.exports = class VideoInfo
   @extensions = [
     "3g2", "3gp", "3gp2", "3gpp", "60d", "ajp", "asf", "asx", "avchd", "avi",
     "bik", "bix", "box", "cam", "dat", "divx", "dmf", "dv", "dvr-ms", "evo", "flc",

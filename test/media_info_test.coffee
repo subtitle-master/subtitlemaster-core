@@ -20,3 +20,7 @@ describe 'MediaInfo', ->
 
   it 'ignores sample files', (info) ->
     expect(info.from('how.i.met.your.mother.s09e16.720p.hdtv.x264-killers.sample.mkv')).null
+
+  it 'ignores non-video files', (info) ->
+    expect(info.from('how.i.met.your.mother.s09e16.720p.hdtv.x264-killers.srt')).null
+    expect(info.from('how.i.met.your.mother.s09e16.720p.hdtv.x264-killers.rar')).null
