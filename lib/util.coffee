@@ -43,12 +43,15 @@ class DirectoryReadStream extends Readable
 module.exports =
   promisedPipe: (input, output) ->
     defer = W.defer()
-    input.pipe(output)
+
+    input.on "error", (err) -> defer.reject(err)
     input.on "end", ->
       if (_.isFunction(output.contents))
         defer.resolve(output.contents())
       else
         defer.resolve(null)
+
+    pipe = input.pipe(output)
 
     defer.promise
 

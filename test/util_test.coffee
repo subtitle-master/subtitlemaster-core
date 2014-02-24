@@ -4,13 +4,13 @@ util   = libRequire("util")
 Stream = require("stream")
 
 describe "Utilities", ->
-  describe "promisedPipe", ->
+  describe "promisedPipe", only: true, ->
     it "resolves after the pipe is done", ->
       output = ""
 
-      other =
-        write: (string) -> output += string
-        contents: -> output
+      other = new Stream.Writable()
+      other.write = (string) -> output += string
+      other.contents = -> output
 
       fakeStream = new Stream()
       fakeStream.pipe = (other) ->
@@ -19,6 +19,15 @@ describe "Utilities", ->
 
       util.promisedPipe(fakeStream, other).then (res)->
         expect(res).eql "test"
+
+    it "rejects if stream generates an error", ->
+      write = new Stream.Writable()
+
+      fakeStream = new Stream.Readable()
+      fakeStream._read = ->
+        @emit('error', new Error('some error'))
+
+      expect(-> util.promisedPipe(fakeStream, write)).reject('some error')
 
   describe "hashToUrlParams", ->
     {hashToUrlParams} = util
