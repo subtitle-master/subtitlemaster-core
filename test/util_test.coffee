@@ -4,7 +4,7 @@ util   = libRequire("util")
 Stream = require("stream")
 
 describe "Utilities", ->
-  describe "promisedPipe", only: true, ->
+  describe "promisedPipe", ->
     it "resolves after the pipe is done", ->
       output = ""
 

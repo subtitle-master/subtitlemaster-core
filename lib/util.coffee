@@ -1,4 +1,4 @@
-{Readable} = require("stream")
+{Readable, Writable} = require("stream")
 fs         = require("fs")
 path = require('path')
 
@@ -40,6 +40,18 @@ class DirectoryReadStream extends Readable
   _stat: fs.stat
   _readdir: fs.readdir
 
+class ListWriteStream extends Writable
+  constructor: ->
+    super(objectMode: true)
+
+    @items = []
+
+  contents: => @items
+
+  _write: (chunk, encoding, callback) =>
+    @items.push(chunk)
+    callback()
+
 module.exports =
   promisedPipe: (input, output) ->
     defer = W.defer()
@@ -71,3 +83,5 @@ module.exports =
         .value()
 
   directoryStream: (path) -> new DirectoryReadStream(path)
+
+  writeObjectsStream: -> new ListWriteStream()
