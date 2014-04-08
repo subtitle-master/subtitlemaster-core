@@ -2,7 +2,7 @@ _    = require("lodash")
 Path = require("path")
 
 SHOW_REGEX = [
-  /(.+)\sS(\d{2})E(\d{2})/i
+  /(.+)\sS(\d+)E(\d+)/i
   /(.+)\s(\d)(\d{2})/
 ]
 

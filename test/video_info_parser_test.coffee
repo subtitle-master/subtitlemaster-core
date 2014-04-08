@@ -1,3 +1,5 @@
+require('./helper.coffee')
+
 parser = libRequire("video_info_parser")
 
 describe "Video Info Parser", ->
@@ -24,3 +26,13 @@ describe "Video Info Parser", ->
 
   describe "parsing an invalid path", ->
     it "returns null", -> expect(parser("Ssacsaca")).to.be.null
+
+  testParse = (filename, name, season, episode) ->
+    info = parser(filename)
+
+    expect(info).property('name', name)
+    expect(info).property('season', season)
+    expect(info).property('episode', episode)
+
+  it "parses the examples correctly", ->
+    testParse('The.Simpsons.S025E17.720p.HDTV.X264-DIMENSION.mkv', 'The Simpsons', 25, 17)
