@@ -28,6 +28,7 @@ describe 'OrganizeMedia', ->
 
       organizer.matchTarget(info).then (entry) ->
         expect(entry).property('newShow', true)
+        expect(entry).property('source', 'original/video/path.mkv')
         expect(entry).property('target', 'target/New Name/Season 02/path.mkv')
 
   describe 'findBestMatch', ->

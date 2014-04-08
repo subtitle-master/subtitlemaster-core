@@ -16,8 +16,10 @@ class OrganizeMover
     return if @moved
 
     nodefn.call(mkdirp, Path.dirname(@target)).then =>
-      nodefn.call(fs.rename, @source, @target) =>
+      nodefn.call(fs.rename, @source, @target).then =>
         @moved = true
+
+        this
 
 module.exports = class OrganizeMedia
   scan: (source, target) =>
@@ -65,10 +67,10 @@ module.exports = class OrganizeMedia
 
     Path.join(@target, name, "Season #{season}", Path.basename(path))
 
-  _extractMediaInfoTransform: (stream, chunk, callback) =>
+  _extractMediaInfoTransform: (stream, chunk) =>
     stream.push(info) if info = new MediaInfo().from(chunk)
 
-  _matchTargetTransform: (stream, chunk, callback) =>
+  _matchTargetTransform: (stream, chunk) =>
     @matchTarget(chunk).then (entry) =>
       stream.push(entry)
 
