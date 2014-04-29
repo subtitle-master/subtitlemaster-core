@@ -19,14 +19,6 @@ module.exports = class OpenSubtitles
 
         _.map(data, (s) => new @SubtitleClass(s, this))
 
-  # findBest: (data, path) ->
-  #   return null if data.length == 0
-
-  #   _(data)
-  #     .map((s) => new @SubtitleClass(s, this))
-  #     .sortBy((s) => -s.searchScore(path))
-  #     .first()
-
   upload: -> W status: "not-implemented"
 
   hash: osHash
