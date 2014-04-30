@@ -5,6 +5,10 @@
   "scripts": {
     "test": "barrier"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/subtitle-master/subtitlemaster-core.git"
+  },
   "maintainers": [
     {
       "name": "Wilker Lucio",
