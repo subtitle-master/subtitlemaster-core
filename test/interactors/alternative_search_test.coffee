@@ -39,11 +39,17 @@ describe 'AlternativeSearch', ->
 
   describe 'download', ->
     it 'pipes streams and returns a download result', ->
-      subtitle = contentStream: -> 'stream'
-      path = 'path'
+      subtitle =
+        language: -> "en"
+        contentStream: -> 'stream'
 
-      search = new AlternativeSearch()
+      path = 'path'
+      sourcePath = '/path/to/file/original.mkv'
+      targetPath = '/path/to/file/original.en.srt'
+
+      search = new AlternativeSearch(sourcePath)
       search._writeStream = quickStub(targetStream = {path})
       search._pipe = quickStub('stream', targetStream, W null)
 
-      expect(search.download(subtitle)).eql {path, subtitle}
+      search.download(subtitle).then (download) ->
+        expect(download).eql {path, subtitle, sourcePath, targetPath}

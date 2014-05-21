@@ -52,3 +52,5 @@ module.exports = (videoPath) ->
     pattern = subnamePattern(videoPath)
 
     new SubtitleInfo(videoPath, extractLanguages(files, pattern))
+
+module.exports.SubtitleInfo = SubtitleInfo
