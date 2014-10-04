@@ -12,7 +12,7 @@ module.exports =
       fileSize = stat.size
 
       nodefn.call(fs.open, path, "r").then (fd) ->
-        reads = _.map [0, fileSize - CHUNK_SIZE], (offset, index) ->
+        reads = _.map [0, fileSize - CHUNK_SIZE], (offset) ->
           buffer = new Buffer(CHUNK_SIZE)
           nodefn.call(fs.read, fd, buffer, 0, CHUNK_SIZE, offset).then ->
             sum = new Long(0, 0, true)
